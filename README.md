@@ -151,5 +151,5 @@ FilterAgent(ts_token: str).run(params: dict) -> pd.DataFrame
 
 ## 🙋‍♀️ 作者
 
-Made with 💻 by [YourName]  
+Made with 💻 by MingTAT  
 如果你喜欢这个项目，欢迎 Star ⭐、Fork 🍴 或提出建议 🙌
