@@ -98,6 +98,10 @@ python test_filter.py
 ```bash
 python test_simulation.py
 ```
+### 一键全流程运行
+
+```bash
+python run.py
 
 ### 输出结果
 
