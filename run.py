@@ -5,6 +5,7 @@ from agents.filter_agent import FilterAgent
 from agents.simulator_agent import SimulatorAgent
 from agents.visualizer_agent import VisualizerAgent
 from agents.exporter_agent import ExporterAgent
+from agents.advisor_agent import AdvisorAgent
 
 if __name__ == "__main__":
     # 读取配置
@@ -20,6 +21,7 @@ if __name__ == "__main__":
     simulator_agent = SimulatorAgent(ts_token)
     visualizer_agent = VisualizerAgent()
     exporter_agent = ExporterAgent()
+    advisor_agent = AdvisorAgent()
 
     # 注册 MCP Dispatcher
     dispatcher = Dispatcher()
@@ -27,6 +29,7 @@ if __name__ == "__main__":
     dispatcher.register_agent("simulate", simulator_agent)
     dispatcher.register_agent("visualize", visualizer_agent)
     dispatcher.register_agent("export", exporter_agent)
+    dispatcher.register_agent("advisor", advisor_agent)
 
     # ========== Step 1: 股票筛选 ==========
     filter_context = TaskContext(task_type="filter", params=filter_params)
@@ -64,3 +67,9 @@ if __name__ == "__main__":
     export_context = dispatcher.run(export_context)
 
     print("🎉 全流程完成，图表 & Excel 文件已生成 outputs 文件夹")
+
+    # ========== Step 5: AI 报告 ==========
+    advisor_context = TaskContext(task_type="advisor", params={"sim_results": sim_results})
+    advisor_context = dispatcher.run(advisor_context)
+
+    print("🎉 全流程完成，AI 报告已生成 outputs 文件夹")
