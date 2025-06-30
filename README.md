@@ -30,7 +30,7 @@ mcp_stock_filter/
 │   ├── visualizer_agent.py       # 图表生成
 │   ├── exporter_agent.py         # Excel 导出 ✅
 │   ├── advisor_agent.py          # AI 报告 ✅
-│   └── strategy_compare_agent.py # （如有，可扩展）
+│   └── strategy_compare_agent.py 
 │
 ├── config/
 │   └── config.yaml
