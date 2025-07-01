@@ -15,7 +15,13 @@ class AdvisorAgent:
                     best_strategy = strat_key
 
                 label = self._translate_label(strat_key)
-                line = f"{label}: Profit Rate {profit:.2f}%, Invested {result['summary']['total_invested']}, Final Value {result['summary']['final_value']}"
+                line = (
+                    f"{label}: Profit {profit:.2f}%, "
+                    f"Max Drawdown {result['summary']['max_drawdown']}%, "
+                    f"Sharpe Ratio {result['summary']['sharpe_ratio']}, "
+                    f"Invested {result['summary']['total_invested']}, "
+                    f"Final Value {result['summary']['final_value']}"
+                )
                 summary_lines.append(line)
 
             report_text = f"📄 Report for {code}\n"
@@ -25,7 +31,6 @@ class AdvisorAgent:
 
             reports[code] = report_text
 
-        # 将每个股票的报告写入一个txt文件
         with open("outputs/advisor_reports.txt", "w", encoding="utf-8") as f:
             for text in reports.values():
                 f.write(text + "\n\n")

@@ -23,7 +23,7 @@ if __name__ == "__main__":
     exporter_agent = ExporterAgent()
     advisor_agent = AdvisorAgent()
 
-    # 注册 MCP Dispatcher
+    # 初始化 MCP Dispatcher
     dispatcher = Dispatcher()
     dispatcher.register_agent("filter", filter_agent)
     dispatcher.register_agent("simulate", simulator_agent)
@@ -56,20 +56,16 @@ if __name__ == "__main__":
 
     print("✅ 策略模拟完成，开始生成图表")
 
-    # ========== Step 3: 可视化 ==========
+    # ========== Step 3: 图表生成 ==========
     visualize_context = TaskContext(task_type="visualize", params={"sim_results": sim_results})
     visualize_context = dispatcher.run(visualize_context)
 
-    print("🎉 全流程完成，图表已生成 outputs 文件夹")
-
-    # Step 4: 导出 Excel
+    # ========== Step 4: Excel 导出 ==========
     export_context = TaskContext(task_type="export", params={"sim_results": sim_results})
     export_context = dispatcher.run(export_context)
 
-    print("🎉 全流程完成，图表 & Excel 文件已生成 outputs 文件夹")
-
-    # ========== Step 5: AI 报告 ==========
+    # ========== Step 5: AI 报告生成 ==========
     advisor_context = TaskContext(task_type="advisor", params={"sim_results": sim_results})
     advisor_context = dispatcher.run(advisor_context)
 
-    print("🎉 全流程完成，AI 报告已生成 outputs 文件夹")
+    print("🎉 全流程完成，所有输出已生成 outputs 文件夹 ✅")

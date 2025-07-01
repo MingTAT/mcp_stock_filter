@@ -1,5 +1,6 @@
 import tushare as ts
 import pandas as pd
+import numpy as np
 
 class SimulatorAgent:
     def __init__(self, ts_token):
@@ -37,7 +38,10 @@ class SimulatorAgent:
         df["total_value"] = shares * df["close"]
         df["total_invested"] = principal
         df["net_value"] = df["total_value"] / df["total_invested"]
-        return {"summary": self._summary(df, principal, shares), "curve": df[["trade_date", "net_value"]]}
+        summary = self._summary(df, principal, shares)
+        risk = self._risk_metrics(df["net_value"])
+        summary.update(risk)
+        return {"summary": summary, "curve": df[["trade_date", "net_value"]]}
 
     def fixed_amount_dca(self, df, principal, frequency):
         total_invested = 0
@@ -56,7 +60,10 @@ class SimulatorAgent:
             df.loc[i:, "total_invested"] = total_invested
             df.loc[i:, "net_value"] = df.loc[i:, "total_value"] / total_invested
 
-        return {"summary": self._summary(df, total_invested, total_shares), "curve": df[["trade_date", "net_value"]]}
+        summary = self._summary(df, total_invested, total_shares)
+        risk = self._risk_metrics(df["net_value"])
+        summary.update(risk)
+        return {"summary": summary, "curve": df[["trade_date", "net_value"]]}
 
     def fixed_shares_dca(self, df, principal, frequency, shares_per_period):
         total_invested = 0
@@ -76,7 +83,10 @@ class SimulatorAgent:
             df.loc[i:, "total_invested"] = total_invested
             df.loc[i:, "net_value"] = df.loc[i:, "total_value"] / total_invested
 
-        return {"summary": self._summary(df, total_invested, total_shares), "curve": df[["trade_date", "net_value"]]}
+        summary = self._summary(df, total_invested, total_shares)
+        risk = self._risk_metrics(df["net_value"])
+        summary.update(risk)
+        return {"summary": summary, "curve": df[["trade_date", "net_value"]]}
 
     def _summary(self, df, invested, shares):
         final_value = shares * df.iloc[-1]["close"]
@@ -87,4 +97,26 @@ class SimulatorAgent:
             "final_value": round(final_value, 2),
             "profit_rate": round(profit_rate, 2),
             "total_shares": round(shares, 2),
+        }
+
+    def _risk_metrics(self, net_values):
+        net_values = net_values.astype(float)
+        daily_returns = net_values.pct_change().dropna()
+
+        # 最大回撤
+        peak = net_values.expanding(min_periods=1).max()
+        drawdown = (peak - net_values) / peak
+        max_drawdown = round(drawdown.max() * 100, 2)
+
+        # 夏普比率
+        avg_return = daily_returns.mean()
+        std_return = daily_returns.std()
+        if std_return == 0:
+            sharpe_ratio = 0
+        else:
+            sharpe_ratio = round((avg_return / std_return) * np.sqrt(252), 2)
+
+        return {
+            "max_drawdown": max_drawdown,
+            "sharpe_ratio": sharpe_ratio
         }
