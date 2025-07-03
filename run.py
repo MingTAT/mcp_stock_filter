@@ -6,6 +6,7 @@ from agents.simulator_agent import SimulatorAgent
 from agents.visualizer_agent import VisualizerAgent
 from agents.exporter_agent import ExporterAgent
 from agents.advisor_agent import AdvisorAgent
+from agents.advanced_strategy_agent import AdvancedStrategyAgent
 
 if __name__ == "__main__":
     # 读取配置
@@ -69,3 +70,18 @@ if __name__ == "__main__":
     advisor_context = dispatcher.run(advisor_context)
 
     print("🎉 全流程完成，所有输出已生成 outputs 文件夹 ✅")
+
+    for code in final_stocks:
+        df = simulator_agent.pro.daily(ts_code=code, start_date=simulator_params["start_date"], end_date=simulator_params["end_date"])
+        if df.empty:
+            continue
+
+    strategy_agent = AdvancedStrategyAgent(df)
+    curve1 = strategy_agent.enhanced_indexing()
+    curve2 = strategy_agent.momentum()
+    curve3 = strategy_agent.trend_following()
+    combined_curve, weights = strategy_agent.auto_weighted_composite([curve1, curve2, curve3])
+
+    # 输出组合信息
+    print(f"✅ 高级策略组合 - {code}")
+    print(f"组合权重: {weights}")
